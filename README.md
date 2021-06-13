@@ -118,11 +118,9 @@ In future, a new parameter can be provided via HTTP-Header to specify the centra
 
 ### European Central Bank URL
 
-I have checked the link sent in the task to make it easy, and there was one XML URL too. Therefore,  I decided to use it instead of the HTML page.
+I have checked the link sent in the task to make it easy, and there was one XML URL too. Therefore, I decided to use it instead of the HTML page to speed up the development.
 
-To speed up the development,
-
-the FXService expects a list of central bank service. The idea there was to make it return the best exchange rates in all the central bank available.
+In addition, the FXService expects a list of central bank service. The idea there was to make it easy to return the best exchange rates in all the central banks available.
 
 ### BigDecimal type
 
@@ -131,6 +129,8 @@ Working with currencies is challenging.
 I opted to use BigDecimal because it provides complete control over the precision and rounding of a number.
 
 The current implementation has a default scale of 4, but I'd need to check with experts the best scale for this problem domain.
+
+A good thing would be to implement my custom time extending BigDecimal.
 
 ### Lack of caching (Not implemented)
 
