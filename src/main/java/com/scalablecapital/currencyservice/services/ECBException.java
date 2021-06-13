@@ -1,8 +1,7 @@
 package com.scalablecapital.currencyservice.services;
 
-public class ECBException extends Exception
+public class ECBException extends RuntimeException
 {
-
     public ECBException(String message) {
         super(message);
     }

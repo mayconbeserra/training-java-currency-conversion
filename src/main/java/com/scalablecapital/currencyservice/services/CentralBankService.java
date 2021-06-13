@@ -16,6 +16,6 @@ public abstract class CentralBankService {
 
     public abstract String getDefaultCurrency();
 
-    public abstract List<ExchangeReferenceRate> getRates() throws ECBException;
+    public abstract List<ExchangeReferenceRate> getRates();
     
 }

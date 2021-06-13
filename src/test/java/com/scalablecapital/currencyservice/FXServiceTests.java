@@ -11,7 +11,6 @@ import java.util.List;
 import com.scalablecapital.currencyservice.models.ExchangeReferenceRate;
 import com.scalablecapital.currencyservice.models.Quote;
 import com.scalablecapital.currencyservice.services.CentralBankService;
-import com.scalablecapital.currencyservice.services.ECBException;
 import com.scalablecapital.currencyservice.services.ECBService;
 import com.scalablecapital.currencyservice.services.FXService;
 
@@ -27,8 +26,7 @@ public class FXServiceTests {
     private static final String HUF = "HUF";
 
     @Test
-    public void whenCurrencyExists_then_should_convert() throws ECBException
-    {
+    public void whenCurrencyExists_then_should_convert() {
         // Arrange
         ECBService ecbService = mock(ECBService.class);
         when(ecbService.getDefaultCurrency()).thenReturn(EUR);

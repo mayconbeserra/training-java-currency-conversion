@@ -1,7 +1,6 @@
 package com.scalablecapital.currencyservice.services;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
@@ -18,13 +17,12 @@ public class FXService {
         this.centralBankServices = centralBankServices;
     }
 
-    public Quote convert(String from, String to, BigDecimal amount) throws ECBException
-    {
+    public Quote convert(String from, String to, BigDecimal amount) {
         var cbsService = centralBankServices.get(DEFAULT_CBS);
         var rates = cbsService.getRates();
 
         if (from.equals(cbsService.getDefaultCurrency())) {
-            var rate = getRateTo(rates, to);
+            var rate = getRateFrom(rates, to);
             var convertedValue = amount.multiply(rate);
             return new Quote(from, to, amount, convertedValue, rate);
         }
@@ -45,29 +43,19 @@ public class FXService {
         return new Quote(from, to, amount, result, rateConversion);
     }
 
-    private BigDecimal getRateFrom(List<ExchangeReferenceRate> rates, String from) throws ECBException
-    {
+    private BigDecimal getRateFrom(List<ExchangeReferenceRate> rates, String from) {
        Stream<ExchangeReferenceRate> stream = rates.stream();
 
        var quote = stream.filter(item -> item.getFrom().equals(from) || item.getTo().equals(from)).findFirst();
 
        if (!quote.isPresent()) {
-           throw new ECBException("Not found");
+           throw new CurrencyNotFoundException(from);
        }
 
        return quote.get().getRate();
     }
 
-    private BigDecimal getRateTo(List<ExchangeReferenceRate> rates, String to) throws ECBException
-    {
-        Stream<ExchangeReferenceRate> stream = rates.stream();
-
-        var quote = stream.filter(item -> item.getTo().equals(to)).findFirst();
-
-        return quote.get().getRate();
-    }
-
-    public List<ExchangeReferenceRate> getRates() throws ECBException {
+    public List<ExchangeReferenceRate> getRates() {
         return centralBankServices.get(DEFAULT_CBS).getRates();
     }
 }

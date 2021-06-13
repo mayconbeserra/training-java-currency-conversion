@@ -19,17 +19,16 @@ import org.xml.sax.SAXException;
 
 public class ECBService extends CentralBankService {
 
-    private final String ECB_TAG = "Cube";
-    private final String NAME = "ECB";
-    private final String DEFAULT_CURRENCY = "EUR";
+    private static final String ECB_TAG = "Cube";
+    private static final String NAME = "ECB";
+    private static final String DEFAULT_CURRENCY = "EUR";
 
     public ECBService(URL url) {
         super(url);
     }
 
     @Override
-    public List<ExchangeReferenceRate> getRates() throws ECBException {
-
+    public List<ExchangeReferenceRate> getRates() {
         NodeList nodeList = getElements(ECB_TAG);
 
         List<ExchangeReferenceRate> list = new ArrayList<>();
@@ -47,9 +46,8 @@ public class ECBService extends CentralBankService {
         return list;
     }
 
-    private NodeList getElements(String tag) throws ECBException {
+    private NodeList getElements(String tag) {
         try {
-
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc;
@@ -59,13 +57,7 @@ public class ECBService extends CentralBankService {
 
             return doc.getElementsByTagName(tag);
 
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new ECBException(e);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ECBException(e);
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
             throw new ECBException(e);
         }
@@ -73,12 +65,11 @@ public class ECBService extends CentralBankService {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return this.NAME;
+        return NAME;
     }
 
     @Override
     public String getDefaultCurrency() {
-        return this.DEFAULT_CURRENCY;
+        return DEFAULT_CURRENCY;
     }
 }
