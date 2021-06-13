@@ -5,8 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class FXServiceTests {
 
         List<ExchangeReferenceRate> quotes = new ArrayList<>();
         quotes.add(new ExchangeReferenceRate(ecbService.getDefaultCurrency(), USD, CreateBigDecimal("1.21")));
-        quotes.add(new ExchangeReferenceRate(ecbService.getDefaultCurrency(), BRL, CreateBigDecimal("7")));
+        quotes.add(new ExchangeReferenceRate(ecbService.getDefaultCurrency(), BRL, CreateBigDecimal("6.15")));
         quotes.add(new ExchangeReferenceRate(ecbService.getDefaultCurrency(), HUF, CreateBigDecimal("100")));
 
         when(ecbService.getRates()).thenReturn(quotes);
@@ -51,6 +49,7 @@ public class FXServiceTests {
         // Act
         var resultEURtoUSD = service.convert("EUR", "USD", amount);
         var resultUSDtoEUR = service.convert("USD", "EUR", amount);
+        var resultUSDtoBRL = service.convert(USD, BRL, amount);
 
         // Assert
         var expectedResultEURtoUSD = new Quote(
@@ -69,6 +68,15 @@ public class FXServiceTests {
             CreateBigDecimal("0.8264")
         );
 
+        var expectedResultUSDtoBRL= new Quote(
+            USD,
+            BRL,
+            amount,
+            CreateBigDecimal("508.2360"),
+            CreateBigDecimal("5.0824")
+        );
+
+        assertEquals(expectedResultUSDtoBRL, resultUSDtoBRL);
         assertEquals(expectedResultEURtoUSD, resultEURtoUSD);
         assertEquals(expectedResultUSDtoEUR, resultUSDtoEUR);
     }

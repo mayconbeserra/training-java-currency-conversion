@@ -1,15 +1,18 @@
 package com.scalablecapital.currencyservice.controllers;
 
+import static org.mockito.ArgumentMatchers.nullable;
+
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.scalablecapital.currencyservice.models.ExchangeReferenceRate;
+import com.scalablecapital.currencyservice.models.Quote;
 import com.scalablecapital.currencyservice.services.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CurrencyConverterController {
@@ -22,10 +25,20 @@ public class CurrencyConverterController {
         forexService = new FXService(centralBankServices);
     }
 
-    @GetMapping("/exchange-rates/{amount}/")
-    public String getURLStatusMessage(@RequestParam String url)
-    {
+    @GetMapping("/quotes")
+    public Object getExchangeRatesBySourceTarget(@RequestParam String source, @RequestParam String target) throws ECBException {
+        // TODO VALIDATE
+        if (source == null || target == null) {
+            return forexService.getRates();
+        }
+        
+        var quote = forexService.convert(source, target, BigDecimal.valueOf(1));
+        return quote;
+    }
 
-        return url;
+    @GetMapping("/exchange-rates")
+    public List<ExchangeReferenceRate> getExchangeRates() throws ECBException {
+        var quote = forexService.getRates();
+        return quote;
     }
 }

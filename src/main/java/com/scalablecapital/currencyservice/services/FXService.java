@@ -1,6 +1,7 @@
 package com.scalablecapital.currencyservice.services;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
@@ -36,9 +37,10 @@ public class FXService {
         }
 
         BigDecimal rateFrom = getRateFrom(rates, from);
-        BigDecimal rateTo = getRateTo(rates, to);
-        BigDecimal rateConversion = amount.divide(rateFrom, DEFAULT_SCALE, RoundingMode.HALF_EVEN);
-        BigDecimal result = rateTo.multiply(rateConversion);
+        BigDecimal rateTo = getRateFrom(rates, to);
+        BigDecimal rateTemp = BigDecimal.valueOf(1).divide(rateFrom, DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+        BigDecimal rateConversion = rateTo.multiply(rateTemp);
+        BigDecimal result = rateConversion.multiply(amount);
 
         return new Quote(from, to, amount, result, rateConversion);
     }
@@ -47,10 +49,10 @@ public class FXService {
     {
        Stream<ExchangeReferenceRate> stream = rates.stream();
 
-       var quote = stream.filter(item -> item.getFrom().equals(from)).findFirst();
+       var quote = stream.filter(item -> item.getFrom().equals(from) || item.getTo().equals(from)).findFirst();
 
        if (!quote.isPresent()) {
-           throw new ECBException("Could not find currency!");
+           throw new ECBException("Not found");
        }
 
        return quote.get().getRate();
@@ -62,10 +64,10 @@ public class FXService {
 
         var quote = stream.filter(item -> item.getTo().equals(to)).findFirst();
 
-        if (!quote.isPresent()) {
-            throw new ECBException("Could not find currency!");
-        }
-
         return quote.get().getRate();
+    }
+
+    public List<ExchangeReferenceRate> getRates() throws ECBException {
+        return centralBankServices.get(DEFAULT_CBS).getRates();
     }
 }

@@ -1,6 +1,9 @@
 package com.scalablecapital.currencyservice.models;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import com.scalablecapital.currencyservice.services.FXService;
 
 import org.apache.commons.lang3.builder.*;
 
@@ -9,9 +12,9 @@ public class Quote extends ExchangeReferenceRate {
     private BigDecimal converted;
 
     public Quote(String from, String to, BigDecimal amount, BigDecimal converted, BigDecimal rate) {
-        super(from, to, rate);
+        super(from, to, rate.setScale(FXService.DEFAULT_SCALE, RoundingMode.HALF_EVEN));
         this.amount = amount;
-        this.converted = converted;
+        this.converted = converted.setScale(FXService.DEFAULT_SCALE, RoundingMode.HALF_EVEN);
     }
 
     public BigDecimal getAmount() {
